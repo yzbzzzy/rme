@@ -1,13 +1,7 @@
 mod response_data;
 mod system_info;
 
-use std::collections::HashMap;
 use actix_web::{get, web, App, HttpRequest, HttpServer, Responder, HttpResponse};
-use actix_web::web::Json;
-use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
-use serde::{Deserialize, Serialize};
-use serde::de::Unexpected::Map;
-
 
 #[get("/")]
 async fn index(_req: HttpRequest) -> impl Responder {
@@ -16,21 +10,21 @@ async fn index(_req: HttpRequest) -> impl Responder {
         .body(include_str!("./static/index.html"))
 }
 async fn network() -> impl Responder {
-    let data = response_data::response_data{ code: 200, data: system_info::get_network_info() };
+    let data = response_data::ResponseData{ code: 200, data: system_info::get_network_info() };
     HttpResponse::Ok()
         .content_type("application/json")
         .json(data)
 }
 
 async fn memory() -> impl Responder {
-    let data = response_data::response_data{ code: 200, data: system_info::get_mem_info() };
+    let data = response_data::ResponseData{ code: 200, data: system_info::get_mem_info() };
     HttpResponse::Ok()
         .content_type("application/json")
         .json(data)
 }
 
 async fn disk() -> impl Responder {
-    let data = response_data::response_data{ code: 200, data: system_info::get_disk_info() };
+    let data = response_data::ResponseData{ code: 200, data: system_info::get_disk_info() };
     HttpResponse::Ok()
         .content_type("application/json")
         .json(data)
