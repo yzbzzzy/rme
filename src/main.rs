@@ -1,16 +1,13 @@
 mod response_data;
 mod system_info;
 
-use std::{io, thread};
+use std::{thread};
 use std::collections::HashMap;
 use std::time::Duration;
 use actix_web::{get, web, App, HttpRequest, HttpServer, Responder, HttpResponse};
-use cpu_monitor::CpuInstant;
-use sys_info::{cpu_num, cpu_speed, loadavg, proc_total};
 use sysinfo::{CpuExt, System, SystemExt};
-use crate::system_info::DevInfo;
 
-static mut usage:f32 = 0.0;
+static mut USAGE:f32 = 0.0;
 
 #[get("/")]
 async fn index(_req: HttpRequest) -> impl Responder {
@@ -42,7 +39,7 @@ async fn disk() -> impl Responder {
 async  fn cpu() -> impl Responder {
     let mut  map:HashMap<String,String> = HashMap::new();
     unsafe {
-        map.insert("cpu_usage".to_string(),usage.clone().to_string());
+        map.insert("cpu_usage".to_string(),USAGE.clone().to_string());
     }
     let data = response_data::ResponseData{ code: 200, data: map};
     HttpResponse::Ok()
@@ -58,10 +55,10 @@ async fn main() -> std::io::Result<()> {
         s.refresh_all();
         loop {
             thread::sleep(Duration::from_secs(3));
-            usage=0.0;
+            USAGE=0.0;
             s.refresh_all();
             for cpu in s.cpus(){
-                usage+=cpu.cpu_usage();
+                USAGE+=cpu.cpu_usage();
             }
         }
     });

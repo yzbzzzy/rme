@@ -1,10 +1,7 @@
 use std::collections::HashMap;
-use sysinfo::{DiskExt, NetworkExt, System, SystemExt,CpuExt};
+use sysinfo::{DiskExt, NetworkExt, System, SystemExt};
 use serde_derive::{Deserialize, Serialize};
 use std::str;
-use std::thread;
-use std::time::Duration;
-use systemstat::{ Platform, saturating_sub_bytes};
 
 #[derive(Debug, PartialEq, Eq, Deserialize,Serialize)]
 pub struct DevType{
