@@ -1,7 +1,10 @@
 use std::collections::HashMap;
-use sysinfo::{DiskExt, NetworkExt, System, SystemExt};
+use sysinfo::{DiskExt, NetworkExt, System, SystemExt,CpuExt};
 use serde_derive::{Deserialize, Serialize};
 use std::str;
+use std::thread;
+use std::time::Duration;
+use systemstat::{ Platform, saturating_sub_bytes};
 
 #[derive(Debug, PartialEq, Eq, Deserialize,Serialize)]
 pub struct DevType{
@@ -10,7 +13,7 @@ pub struct DevType{
 #[derive(Debug, PartialEq, Eq, Deserialize,Serialize)]
 pub struct DevInfo{
     dev_name:String,
-    data:HashMap<String,String>
+    pub(crate) data:HashMap<String,String>
 }
 pub fn get_network_info() ->HashMap<String,DevType>{
     let mut data = HashMap::new();
@@ -50,7 +53,7 @@ pub  fn get_mem_info()->HashMap<String,DevType>{
     return  data;
 }
 
-pub fn get_disk_info()->HashMap<String,DevType>{
+pub  fn get_disk_info()->HashMap<String,DevType>{
     let mut sys = System::new_all();
     sys.refresh_all();
     let mut data = HashMap::new();
@@ -65,4 +68,12 @@ pub fn get_disk_info()->HashMap<String,DevType>{
     }
     data.insert("disk".to_string(),DevType{device_info:_disk});
     return data;
+}
+
+#[test]
+fn t(){
+    let s = System::new();
+    for cpu in s.cpus() {
+        println!("{}%", cpu.cpu_usage());
+    }
 }
